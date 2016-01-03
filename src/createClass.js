@@ -71,25 +71,25 @@ export let createClass = spec => {
 	let specMixins = spec.mixins || []
 	let mixins = specMixins.concat(spec)
 	spec.mixins = null
-	function Klass(props, context) {
+	function Class(props, context) {
 		Component.call(this, props, context)
-		this.constructor = Klass
-		spec.autobind !== false && bindContext(this, Klass.prototype)
+		this.constructor = Class
+		spec.autobind !== false && bindContext(this, Class.prototype)
 		this.state = this.getInitialState() || this.state
 	}
-	Klass.displayName = spec.displayName
-	Klass.contextTypes = {}
-	Klass.propTypes = {}
-	Klass.defaultProps = {}
-	let proto = Klass.prototype = new Facade()
+	Class.displayName = spec.displayName
+	Class.contextTypes = {}
+	Class.propTypes = {}
+	Class.defaultProps = {}
+	let proto = Class.prototype = new Facade()
 	proto.$getInitialStates = []
 	eachMixin(mixins, mixin => {
 		combineMixinToProto(proto, mixin)
-		combineMixinToClass(Klass, mixin)
+		combineMixinToClass(Class, mixin)
 	})
 	proto.getInitialState = getInitialState
 	spec.mixins = specMixins
-	return Klass
+	return Class
 }
 
 export default createClass

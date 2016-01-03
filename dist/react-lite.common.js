@@ -1423,25 +1423,25 @@ var createClass = function createClass(spec) {
 	var specMixins = spec.mixins || [];
 	var mixins = specMixins.concat(spec);
 	spec.mixins = null;
-	function Klass(props, context) {
+	function Class(props, context) {
 		Component.call(this, props, context);
-		this.constructor = Klass;
-		spec.autobind !== false && bindContext(this, Klass.prototype);
+		this.constructor = Class;
+		spec.autobind !== false && bindContext(this, Class.prototype);
 		this.state = this.getInitialState() || this.state;
 	}
-	Klass.displayName = spec.displayName;
-	Klass.contextTypes = {};
-	Klass.propTypes = {};
-	Klass.defaultProps = {};
-	var proto = Klass.prototype = new Facade();
+	Class.displayName = spec.displayName;
+	Class.contextTypes = {};
+	Class.propTypes = {};
+	Class.defaultProps = {};
+	var proto = Class.prototype = new Facade();
 	proto.$getInitialStates = [];
 	eachMixin(mixins, function (mixin) {
 		combineMixinToProto(proto, mixin);
-		combineMixinToClass(Klass, mixin);
+		combineMixinToClass(Class, mixin);
 	});
 	proto.getInitialState = getInitialState;
 	spec.mixins = specMixins;
-	return Klass;
+	return Class;
 };
 
 var React = extend({

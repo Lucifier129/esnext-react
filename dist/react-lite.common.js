@@ -585,8 +585,9 @@ function initVcomponent(vcomponent, parentContext, namespaceURI) {
 
     cache.parentContext = parentContext;
     updater.isPending = true;
-    component.props = component.props || props;
-    component.context = component.context || componentContext;
+    component.props = orObject(component.props) || props;
+    component.context = orObject(component.context) || componentContext;
+
     if (component.componentWillMount) {
         component.componentWillMount();
         component.state = updater.getState();
@@ -911,7 +912,7 @@ Component.prototype = {
 		}
 		var nextProps = $cache.props || props;
 		var nextState = $cache.state || state;
-		var nextContext = $cache.context || {};
+		var nextContext = $cache.context || orObject(context) || {};
 		var parentContext = $cache.parentContext;
 		var node = $cache.node;
 		var vnode = $cache.vnode;
@@ -1074,6 +1075,20 @@ function createSyntheticEvent(nativeEvent) {
 		}
 	}
 	return syntheticEvent;
+}
+
+// Speed up calls to hasOwnProperty
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+function orObject(obj) {
+	if (obj == null) return false;
+	if (obj.length > 0) return obj;
+	if (obj.length === 0) return false;
+
+	for (var key in obj) {
+		if (hasOwnProperty.call(obj, key)) return obj;
+	}
+	return false;
 }
 
 function isFn(obj) {

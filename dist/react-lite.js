@@ -589,8 +589,8 @@
 
       cache.parentContext = parentContext;
       updater.isPending = true;
-      component.props = isEmpty(component.props) ? props : component.props;
-      component.context = isEmpty(component.context) ? componentContext : component.context;
+      component.props = orObject(component.props) || props;
+      component.context = orObject(component.context) || componentContext;
 
       if (component.componentWillMount) {
           component.componentWillMount();
@@ -916,7 +916,7 @@
   		}
   		var nextProps = $cache.props || props;
   		var nextState = $cache.state || state;
-  		var nextContext = $cache.context || {};
+  		var nextContext = $cache.context || orObject(context) || {};
   		var parentContext = $cache.parentContext;
   		var node = $cache.node;
   		var vnode = $cache.vnode;
@@ -1081,22 +1081,22 @@
   	return syntheticEvent;
   }
 
-  function isFn(obj) {
-  	return typeof obj === 'function';
-  }
-
   // Speed up calls to hasOwnProperty
   var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-  function isEmpty(obj) {
-  	if (obj == null) return true;
-  	if (obj.length > 0) return false;
-  	if (obj.length === 0) return true;
+  function orObject(obj) {
+  	if (obj == null) return false;
+  	if (obj.length > 0) return obj;
+  	if (obj.length === 0) return false;
 
   	for (var key in obj) {
-  		if (hasOwnProperty.call(obj, key)) return false;
+  		if (hasOwnProperty.call(obj, key)) return obj;
   	}
-  	return true;
+  	return false;
+  }
+
+  function isFn(obj) {
+  	return typeof obj === 'function';
   }
 
   var isArr = Array.isArray;

@@ -11,15 +11,15 @@ import {
 // Speed up calls to hasOwnProperty
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
-export function isEmpty(obj) {
-    if (obj == null) return true
-    if (obj.length > 0) return false
-    if (obj.length === 0)  return true
+export function orObject(obj) {
+    if (obj == null) return false
+    if (obj.length > 0) return obj
+    if (obj.length === 0)  return false
 
     for (var key in obj) {
-        if (hasOwnProperty.call(obj, key)) return false
+        if (hasOwnProperty.call(obj, key)) return obj
     }
-    return true
+    return false
 }
 
 export function isFn(obj) {

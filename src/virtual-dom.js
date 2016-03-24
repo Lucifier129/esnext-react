@@ -276,8 +276,8 @@ function initVcomponent(vcomponent, parentContext, namespaceURI) {
     let { $updater: updater, $cache: cache } = component
     cache.parentContext = parentContext
     updater.isPending = true
-    component.props = _.isEmpty(component.props) ? props : component.props;
-    component.context = _.isEmpty(component.context) ? componentContext : component.context;
+    component.props = _.orObject(component.props) || props;
+    component.context = _.orObject(component.context) || componentContext;
 
     if (component.componentWillMount) {
         component.componentWillMount()

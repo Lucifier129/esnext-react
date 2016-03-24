@@ -78,7 +78,7 @@ export function destroyVnode(vnode, node) {
 function initVelem(velem, parentContext, namespaceURI) {
     let { type, props } = velem
     let node = null
-    
+
     if (type === 'svg' || namespaceURI === SVGNamespaceURI) {
         node = document.createElementNS(SVGNamespaceURI, type)
         namespaceURI = SVGNamespaceURI
@@ -187,7 +187,7 @@ function updateVelem(velem, newVelem, node, parentContext) {
         }
         _.patchProps(node, props, newProps)
     } else {
-        // should patch props first, make sure innerHTML was cleared 
+        // should patch props first, make sure innerHTML was cleared
         _.patchProps(node, props, newProps)
         for (let i = 0; i < newVchildrenLen; i++) {
             node.appendChild(initVnode(newVchildren[i], parentContext, namespaceURI))
@@ -276,8 +276,9 @@ function initVcomponent(vcomponent, parentContext, namespaceURI) {
     let { $updater: updater, $cache: cache } = component
     cache.parentContext = parentContext
     updater.isPending = true
-    component.props = component.props || props
-    component.context = component.context || componentContext
+    component.props = _.isEmpty(component.props) ? props : component.props;
+    component.context = _.isEmpty(component.context) ? componentContext : component.context;
+
     if (component.componentWillMount) {
         component.componentWillMount()
         component.state = updater.getState()
@@ -361,7 +362,7 @@ export function renderComponent(component, parentContext) {
     } else if (!vnode || !vnode.vtype) {
         throw new Error(`@${component.constructor.name}#render:You may have returned undefined, an array or some other invalid object`)
     }
-    
+
 	let curContext = refs = null
     if (component.getChildContext) {
         curContext = component.getChildContext()
@@ -405,7 +406,7 @@ export function compareTwoVnodes(vnode, newVnode, node, parentContext) {
         destroyVnode(vnode, node)
         newNode = initVnode(newVnode, parentContext, node.namespaceURI)
         node.parentNode.replaceChild(newNode, node)
-    } else if (vnode !== newVnode) { 
+    } else if (vnode !== newVnode) {
         // same type and same key -> update
         let vtype = vnode.vtype
         if (vtype === VELEMENT) {
@@ -416,7 +417,7 @@ export function compareTwoVnodes(vnode, newVnode, node, parentContext) {
             newNode = updateVstateless(vnode, newVnode, node, parentContext)
         }
     }
-    
+
     return newNode
 }
 

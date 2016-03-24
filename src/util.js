@@ -8,8 +8,22 @@ import {
 	isUnitlessNumber
 } from './constant'
 
+// Speed up calls to hasOwnProperty
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+export function isEmpty(obj) {
+    if (obj == null) return true
+    if (obj.length > 0) return false
+    if (obj.length === 0)  return true
+
+    for (var key in obj) {
+        if (hasOwnProperty.call(obj, key)) return false
+    }
+    return true
+}
+
 export function isFn(obj) {
-	return typeof obj === 'function'
+    return typeof obj === 'function'
 }
 
 export let isArr = Array.isArray
@@ -242,7 +256,7 @@ let isUnitlessNumberWithPrefix = {}
 let prefixes = ['Webkit', 'ms', 'Moz', 'O'];
 let prefixKey = (prefix, key) => prefix + key.charAt(0).toUpperCase() + key.substring(1)
 mapValue(isUnitlessNumber, (_, prop) => {
-	eachItem(prefixes, prefix => 
+	eachItem(prefixes, prefix =>
 		isUnitlessNumberWithPrefix[prefixKey(prefix, prop)] = true
 	)
 })

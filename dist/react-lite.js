@@ -589,8 +589,9 @@
 
       cache.parentContext = parentContext;
       updater.isPending = true;
-      component.props = component.props || props;
-      component.context = component.context || componentContext;
+      component.props = isEmpty(component.props) ? props : component.props;
+      component.context = isEmpty(component.context) ? componentContext : component.context;
+
       if (component.componentWillMount) {
           component.componentWillMount();
           component.state = updater.getState();
@@ -1082,6 +1083,20 @@
 
   function isFn(obj) {
   	return typeof obj === 'function';
+  }
+
+  // Speed up calls to hasOwnProperty
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+  function isEmpty(obj) {
+  	if (obj == null) return true;
+  	if (obj.length > 0) return false;
+  	if (obj.length === 0) return true;
+
+  	for (var key in obj) {
+  		if (hasOwnProperty.call(obj, key)) return false;
+  	}
+  	return true;
   }
 
   var isArr = Array.isArray;

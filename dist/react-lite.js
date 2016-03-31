@@ -1585,7 +1585,15 @@
       }
   }
 
-  function extend(to, from) {
+  function extend(to) /* sources */{
+      var nextSource, nextIndex;
+      for (nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+          nextSource = arguments[nextIndex];
+          if (nextSource == null) {
+              continue;
+          }
+      }
+      var from = Object(nextSource);
       if (!from) {
           return to;
       }
@@ -2139,7 +2147,8 @@
       createClass: createClass,
       Children: Children,
       PropTypes: PropTypes,
-      DOM: DOM
+      DOM: DOM,
+      __spread: extend
   }, ReactDOM);
 
   React.__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactDOM;

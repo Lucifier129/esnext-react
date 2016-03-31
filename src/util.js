@@ -47,7 +47,15 @@ export function eachItem(list, iteratee) {
     }
 }
 
-export function extend(to, from) {
+export function extend(to, /* sources */) {
+    var nextSource, nextIndex;
+    for (nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+        nextSource = arguments[nextIndex];
+        if (nextSource == null) {
+            continue;
+        }
+    }
+    var from = Object(nextSource);
     if (!from) {
         return to
     }

@@ -1,60 +1,71 @@
 {
-  "name": "react-lite",
-  "version": "0.15.10",
-  "description": "an implementation of React that optimizes for small script size",
-  "main": "dist/react-lite.common.js",
-  "jsnext:main": "src/index.js",
-  "scripts": {
-    "test": "jest",
-    "build:addons": "node_modules/.bin/babel ./addons --out-dir ./lib && babel ./src --out-dir ./lib",
-    "build": "node build.js",
-    "prepublish": "npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Lucifier129/react-lite.git"
-  },
-  "jest": {
-    "scriptPreprocessor": "<rootDir>/jest/preprocessor.js",
-    "persistModuleRegistryBetweenSpecs": true,
-    "unmockedModulePathPatterns": [
-      ""
-    ]
-  },
-  "keywords": [
-    "react",
-    "lite",
-    "react-lite",
-    "component",
-    "virtual-dom"
-  ],
-  "author": "Jade Gu <guyingjie129@163.com> (https://github.com/Lucifier129)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Lucifier129/react-lite/issues"
-  },
-  "homepage": "https://github.com/Lucifier129/react-lite",
-  "devDependencies": {
-    "babel": "^5.8.35",
-    "babel-core": "^5.8.25",
-    "babel-jest": "^5.3.0",
-    "babel-loader": "^5.3.2",
-    "babel-runtime": "^5.8.25",
-    "jest-cli": "^0.8.1",
-    "jest-webpack-alias": "^2.0.0",
-    "rollup": "^0.21.0",
-    "rollup-plugin-babel": "^1.0.0",
-    "rollup-plugin-replace": "^1.1.0",
-    "uglify-js": "^2.6.1",
-    "webpack": "^1.12.2"
-  },
-  "npmName": "react-lite",
-  "npmFileMap": [
-    {
-      "basePath": "/dist/",
-      "files": [
-        "*.js"
-      ]
+    "name": "react-lite",
+    "version": "0.15.10",
+    "description": "an implementation of React that optimizes for small script size",
+    "main": "dist/react-lite.common.js",
+    "jsnext:main": "src/index.js",
+    "scripts": {
+        "test": "jest",
+        "build:addons": "node_modules/.bin/babel ./addons --out-dir ./lib && babel ./src --out-dir ./lib",
+        "build": "node build.js",
+        "prepublish": "npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Lucifier129/react-lite.git"
+    },
+    "jest": {
+        "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+        "unmockedModulePathPatterns": [
+            ""
+        ]
+    },
+    "keywords": [
+        "react",
+        "lite",
+        "react-lite",
+        "component",
+        "virtual-dom"
+    ],
+    "author": "Jade Gu <guyingjie129@163.com> (https://github.com/Lucifier129)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Lucifier129/react-lite/issues"
+    },
+    "homepage": "https://github.com/Lucifier129/react-lite",
+    "devDependencies": {
+        "babel": "^6.x",
+        "babel-core": "^6.3.26",
+        "babel-eslint": "^4.1.5",
+        "babel-jest": "^6.0.1",
+        "babel-loader": "~6.0.1",
+        "babel-plugin-add-module-exports": "^0.2.0",
+        "babel-preset-es2015": "^6.1.18",
+        "babel-preset-react": "^6.1.18",
+        "babel-preset-stage-2": "^6.5.0",
+        "babel-runtime": "^6.x",
+        "jest-cli": "^12.x",
+        "jest-webpack-alias": "^2.3.0",
+        "rollup": "^0.21.0",
+        "rollup-plugin-babel": "^1.0.0",
+        "rollup-plugin-replace": "^1.1.0",
+        "uglify-js": "^2.6.1",
+        "webpack": "^1.12.2"
+    },
+    "npmName": "react-lite",
+    "npmFileMap": [{
+        "basePath": "/dist/",
+        "files": [
+            "*.js"
+        ]
+    }],
+    "babel": {
+        "presets": [
+            "es2015",
+            "react"
+        ],
+        "plugins": [
+            "add-module-exports"
+        ]
     }
-  ]
 }

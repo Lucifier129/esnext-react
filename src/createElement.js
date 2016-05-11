@@ -1,37 +1,21 @@
 import * as _ from './util'
-import { createVelem, createVcomponent, createVstateless } from './virtual-dom'
-
-export function isValidElement(obj) {
-	return obj != null && !!obj.vtype
-}
-
-export function cloneElement(originElem, props, ...children) {
-	let { type, key, ref } = originElem
-	let newProps = _.extend(_.extend({ key, ref }, originElem.props), props)
-	let vnode = createElement(type, newProps, ...children)
-	if (vnode.ref === originElem.ref) {
-		vnode.refs = originElem.refs
-	}
-	return vnode
-}
-
-export function createFactory(type) {
-	let factory = (...args) => createElement(type, ...args)
-	factory.type = type
-	return factory
-}
+import {
+    VELEMENT,
+    VSTATELESS,
+    VCOMPONENT,
+    VCOMMENT
+} from './constant'
+import { createVnode } from './virtual-dom'
 
 export default function createElement(type, props, children) {
-	let createVnode = null
-	let varType = typeof type
-
-	if (varType === 'string') {
-		createVnode = createVelem
-	} else if (varType === 'function') {
+	let vtype = null
+	if (typeof type === 'string') {
+		vtype = VELEMENT
+	} else if (typeof type === 'function') {
 		if (type.prototype && typeof type.prototype.forceUpdate === 'function') {
-			createVnode = createVcomponent
+			vtype = VCOMPONENT
 		} else {
-			createVnode = createVstateless
+			vtype = VSTATELESS
 		}
 	} else {
 		throw new Error(`React.createElement: unexpect type [ ${type} ]`)
@@ -83,8 +67,25 @@ export default function createElement(type, props, children) {
 		finalProps.children = finalChildren
 	}
 
-	let vnode = createVnode(type, finalProps)
-	vnode.key = key
-	vnode.ref = ref
+	return createVnode(vtype, type, finalProps, key, ref)
+}
+
+export function isValidElement(obj) {
+	return obj != null && !!obj.vtype
+}
+
+export function cloneElement(originElem, props, ...children) {
+	let { type, key, ref } = originElem
+	let newProps = _.extend(_.extend({ key, ref }, originElem.props), props)
+	let vnode = createElement(type, newProps, ...children)
+	if (vnode.ref === originElem.ref) {
+		vnode.refs = originElem.refs
+	}
 	return vnode
+}
+
+export function createFactory(type) {
+	let factory = (...args) => createElement(type, ...args)
+	factory.type = type
+	return factory
 }

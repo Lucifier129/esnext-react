@@ -47,6 +47,29 @@ export function eachItem(list, iteratee) {
     }
 }
 
+
+export function loop8(list, iteratee) {
+    let len = list.length
+    let optimizeCount = Math.floor(len / 8)
+    let normalCount = len % 8
+    let index = 0
+    while (optimizeCount > 0) {
+        iteratee(list[index++])
+        iteratee(list[index++])
+        iteratee(list[index++])
+        iteratee(list[index++])
+        iteratee(list[index++])
+        iteratee(list[index++])
+        iteratee(list[index++])
+        iteratee(list[index++])
+        optimizeCount -= 1
+    }
+    while (normalCount > 0) {
+        iteratee(list[index++])
+        normalCount -= 1
+    }
+}
+
 export function extend(to, from) {
     if (!from) {
         return to

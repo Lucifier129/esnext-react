@@ -307,14 +307,14 @@ describe('ReactEmptyComponent', function() {
     var container = document.createElement('div');
 
     ReactDOM.render(<Empty />, container);
-    var noscript1 = container.firstChild;
-    expect(noscript1.nodeName).toBe('#comment');
+    var comment1 = container.firstChild;
+    expect(comment1.nodeName).toBe('#comment');
 
     // This update shouldn't create a DOM node
     ReactDOM.render(<Empty />, container);
-    var noscript2 = container.firstChild;
-    expect(noscript2.nodeName).toBe('#comment');
+    var comment2 = container.firstChild;
+    expect(comment2.nodeName).toBe('#comment');
 
-    expect(noscript1).toBe(noscript2);
+    expect(comment1).toBe(comment2);
   });
 });

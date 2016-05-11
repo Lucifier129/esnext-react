@@ -1,6 +1,6 @@
 import * as _ from './util'
 import { COMPONENT_ID, VELEMENT, VCOMPONENT } from './constant'
-import { initVnode, destroyVnode, batchUpdateDOM, compareTwoVnodes } from './virtual-dom'
+import { initVnode, destroyVnode, clearPendingComponents, compareTwoVnodes } from './virtual-dom'
 import { updateQueue } from './Component'
 
 let pendingRendering = {}
@@ -16,12 +16,12 @@ function renderTreeIntoContainer(vnode, container, callback, parentContext) {
 	// should bundle them and render by only one time
 	if (argsCache) {
 		if (argsCache === true) {
-			pendingRendering[id] = argsCache = [vnode, callback, parentContext]
+			pendingRendering[id] = argsCache = { vnode, callback, parentContext }
 		} else {
-			argsCache[0] = vnode
-			argsCache[2] = parentContext
-			if (callback) {
-				argsCache[1] = argsCache[1] ? _.pipe(argsCache[1], callback) : callback
+			argsCache.vnode = vnode
+			argsCache.parentContext = parentContext
+			if (argsCache.callback) {
+				argsCache.callback = argsCache.callback ? _.pipe(argsCache.callback, callback) : callback
 			}
 		}
 		return
@@ -43,17 +43,17 @@ function renderTreeIntoContainer(vnode, container, callback, parentContext) {
 	vnodeStore[id] = vnode
 	let isPending = updateQueue.isPending
 	updateQueue.isPending = true
-	batchUpdateDOM()
+	clearPendingComponents()
 	argsCache = pendingRendering[id]
 	delete pendingRendering[id]
 
 	let result = null
 	if (_.isArr(argsCache)) {
-		result = renderTreeIntoContainer(argsCache[0], container, argsCache[1], argsCache[2])
+		result = renderTreeIntoContainer(argsCache.vnode, container, argsCache.parentContext, argsCache.callback)
 	} else if (vnode.vtype === VELEMENT) {
 		result = rootNode
 	} else if (vnode.vtype === VCOMPONENT) {
-		result = rootNode.cache[vnode.id]
+		result = rootNode.cache[vnode.uid]
 	}
 	
 	if (!isPending) {

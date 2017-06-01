@@ -872,7 +872,6 @@ var unbubbleEvents = {
      * even though mousemove event can bubble
      */
     onmousemove: 1,
-    ontouchmove: 1,
     onmouseleave: 1,
     onmouseenter: 1,
     onload: 1,
@@ -956,8 +955,6 @@ function addEvent(elem, eventType, listener) {
         return;
     }
 
-    var nodeName = elem.nodeName;
-
     if (eventType === 'onchange' && supportInputEvent(elem)) {
         addEvent(elem, 'oninput', listener);
     }
@@ -976,8 +973,6 @@ function removeEvent(elem, eventType) {
         elem.removeEventListener('click', emptyFunction, false);
         return;
     }
-
-    var nodeName = elem.nodeName;
 
     if (eventType === 'onchange' && supportInputEvent(elem)) {
         delete eventStore['oninput'];

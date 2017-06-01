@@ -8,7 +8,6 @@ export const unbubbleEvents = {
      * even though mousemove event can bubble
      */
     onmousemove: 1,
-    ontouchmove: 1,
     onmouseleave: 1,
     onmouseenter: 1,
     onload: 1,
@@ -92,8 +91,6 @@ export function addEvent(elem, eventType, listener) {
         return
     }
 
-    let nodeName = elem.nodeName
-
     if (eventType === 'onchange' && supportInputEvent(elem)) {
         addEvent(elem, 'oninput', listener)
     }
@@ -112,8 +109,6 @@ export function removeEvent(elem, eventType) {
         elem.removeEventListener('click', emptyFunction, false)
         return
     }
-
-    let nodeName = elem.nodeName
 
     if (eventType === 'onchange' && supportInputEvent(elem)) {
         delete eventStore['oninput']

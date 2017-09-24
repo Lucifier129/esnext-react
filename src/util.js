@@ -101,6 +101,10 @@ function removeProp(elem, key, oldValue, isCustomComponent) {
 }
 
 function patchProp(elem, key, value, oldValue, isCustomComponent) {
+    if (elem.localName == "select" && key == "value" && isArr(value)) {
+        return
+    }
+
     if (key === 'value' || key === 'checked') {
         oldValue = elem[key]
     }

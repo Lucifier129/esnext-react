@@ -94,6 +94,8 @@ function applyUpdate(data) {
 
     // update
     if (!data.shouldIgnore) {
+        convertSelectElement(data.newVnode)
+
         if (!vnode.vtype) {
             newNode.replaceData(0, newNode.length, data.newVnode)
         } else if (vnode.vtype === VELEMENT) {
@@ -151,11 +153,12 @@ function initVelem(velem, parentContext, namespaceURI) {
         node = document.createElement(type)
     }
 
-
-    initVchildren(velem, node, parentContext)
+    convertSelectElement(velem)
 
     let isCustomComponent = type.indexOf('-') >= 0 || props.is != null
     _.setProps(node, props, isCustomComponent)
+
+    initVchildren(velem, node, parentContext)
 
     if (velem.ref != null) {
         _.addItem(pendingRefs, velem)
@@ -246,6 +249,7 @@ function diffVchildren(patches, vnode, newVnode, node, parentContext) {
                 continue
             }
             let newVnode = newVchildren[j]
+            convertSelectElement(newVnode)
             if (vnode === newVnode) {
                 updates[j] = {
                     shouldIgnore: shouldIgnoreUpdate(node),
@@ -630,4 +634,41 @@ function shouldIgnoreUpdate(node) {
     }
 
     return true
+}
+
+/**
+ * Update Select child option element selected attribute 
+ */
+function convertSelectElement(vnode) {
+    if (vnode.type === "select") {
+        var propValue = vnode.props.value
+        var props = vnode.props
+        var options = vnode.props.children
+        
+        
+        if (typeof propValue == "string" || typeof propValue == "number") {
+            var selectedItems = options.filter(item => item.props.value === propValue)
+            selectedItems.forEach((element) => {
+                element.props.selected = true
+                return
+            }, this)
+        }
+
+        // multi select
+        if (_.isArr(propValue) && props.multiple) {
+            let selectedValue = {}
+            // Key the selected values
+            for (let i = 0; i < propValue.length; i++) {
+                // Prefix to avoid chaos with special keys.
+                selectedValue['$' + propValue[i]] = true                
+            }
+
+            // Find option in selected key
+            for (let i = 0; i < options.length; i++) {
+                if (selectedValue.hasOwnProperty('$' + options[i].props.value)) {
+                    options[i].props.selected = true
+                }
+            }
+        }
+    }
 }

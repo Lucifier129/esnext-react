@@ -81,8 +81,8 @@ function updateVnode(vnode, newVnode, node, parentContext) {
         updateVelem(vnode, newVnode, node, parentContext);
         initVchildren(newVnode, node, parentContext);
     } else {
-        updateVChildren(vnode, newVnode, node, parentContext);
         updateVelem(vnode, newVnode, node, parentContext);
+        updateVChildren(vnode, newVnode, node, parentContext);
     }
     return node;
 }
@@ -108,6 +108,8 @@ function applyUpdate(data) {
 
     // update
     if (!data.shouldIgnore) {
+        convertSelectElement(data.newVnode);
+
         if (!vnode.vtype) {
             newNode.replaceData(0, newNode.length, data.newVnode);
         } else if (vnode.vtype === VELEMENT) {
@@ -170,10 +172,15 @@ function initVelem(velem, parentContext, namespaceURI) {
         node = document.createElement(type);
     }
 
-    initVchildren(velem, node, parentContext);
+    convertSelectElement(velem);
+    if (type == "select") velem.props.children.forEach(function (element) {
+        // console.log("value", velem.props.value, "type:", element.type, "element.Props:", element.props, "selected:", element.props.selected)
+    }, this);
 
     var isCustomComponent = type.indexOf('-') >= 0 || props.is != null;
     setProps(node, props, isCustomComponent);
+
+    initVchildren(velem, node, parentContext);
 
     if (velem.ref != null) {
         addItem(pendingRefs, velem);
@@ -266,6 +273,7 @@ function diffVchildren(patches, vnode, newVnode, node, parentContext) {
                 continue;
             }
             var _newVnode = newVchildren[j];
+            convertSelectElement(_newVnode);
             if (_vnode === _newVnode) {
                 updates[j] = {
                     shouldIgnore: shouldIgnoreUpdate(node),
@@ -654,6 +662,45 @@ function shouldIgnoreUpdate(node) {
     }
 
     return true;
+}
+
+/**
+ * @Bugfix IE/Edge: Allow the option to be selected based on "props.value" of the select element 
+ * @param {*} vnode 
+ */
+function convertSelectElement(vnode) {
+    if (vnode.type === "select") {
+        var propValue = vnode.props.value;
+        var props = vnode.props;
+        var options = vnode.props.children;
+
+        if (typeof propValue == "string" || typeof propValue == "number") {
+            var selectedItems = options.filter(function (item) {
+                return item.props.value === propValue;
+            });
+            selectedItems.forEach(function (element) {
+                element.props.selected = true;
+                return;
+            }, this);
+        }
+
+        // multi select
+        if (isArr(propValue) && props.multiple) {
+            var selectedValue = {};
+            // Key the selected values
+            for (var i = 0; i < propValue.length; i++) {
+                // Prefix to avoid chaos with special keys.
+                selectedValue['$' + propValue[i]] = true;
+            }
+
+            // Find option in selected key
+            for (var i = 0; i < options.length; i++) {
+                if (selectedValue.hasOwnProperty('$' + options[i].props.value)) {
+                    options[i].props.selected = true;
+                }
+            }
+        }
+    }
 }
 
 var updateQueue = {
@@ -1895,6 +1942,11 @@ function removeProp(elem, key, oldValue, isCustomComponent) {
 }
 
 function patchProp(elem, key, value, oldValue, isCustomComponent) {
+    // If ele.localName == "select" then updating value will detach the options
+    if (elem.localName == "select" && key == "value" && isArr(value)) {
+        return;
+    }
+
     if (key === 'value' || key === 'checked') {
         oldValue = elem[key];
     }

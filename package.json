@@ -7,7 +7,8 @@
   "scripts": {
     "test": "jest",
     "build:addons": "babel ./addons --out-dir ./lib",
-    "build": "node build.js && npm run build:addons",
+    "build:core": "babel ./src --out-dir ./lib",
+    "build": "node build.js && npm run build:core && npm run build:addons",
     "prepublish": "npm test && npm run build"
   },
   "publishConfig": {
